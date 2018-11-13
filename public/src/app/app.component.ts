@@ -1,30 +1,36 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpService } from "./http.service";
+import { Component } from '@angular/core';
+import { HttpService } from './http.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.css'],
 })
+export class AppComponent {
+  title = 'Pokemon API Version 2';
+  constructor(private _httpService: HttpService) {}
 
-export class AppComponent implements OnInit {
-    title = 'Pokemon API';
-    imgBaseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1' + '.png';
-    image = this.imgBaseUrl;
-    pokemon = [];
-    constructor (private _httpService : HttpService ) {
-    };
+  Pokemon = [];
+  relatedPokemon = [];
 
-    ngOnInit () {
-        this.getPokemonFromService();
-    };
-
-    getPokemonFromService () {
-        let observable = this._httpService.getPokemon();
-        observable.subscribe ( data => {
-            console.log("Got Bulbasaur!", data);
-            // console.log(`Got our tasks! ${data}`);
-            this.pokemon = data["data"];
-        });
-    };
+  displayPokemon() {
+    this._httpService.getPokemon().subscribe(
+      response => {
+        this.Pokemon.push(response);
+        console.log(this.Pokemon);
+      },
+      error => console.log(error)
+    );
+  }
+  findRelatedPokemon(url) {
+    console.log(url.pokemon);
+    this._httpService.getRelatedPokemon(url).subscribe(
+      response => {
+        this.relatedPokemon.push(response);
+        console.log(this.relatedPokemon);
+      },
+      error => console.log(error)
+    );
+  }
 }
